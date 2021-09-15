@@ -8,6 +8,9 @@ authors = ["Josix <josixwang@gmail.com>"]
 python = "^3.9"
 loguru = "^0.5.3"
 pydantic = "^1.8.2"
+numpy = "1.21.0"
+networkx = "^2.6.3"
+tqdm = "^4.62.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
