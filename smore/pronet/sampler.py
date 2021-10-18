@@ -1,27 +1,10 @@
 """
 Edge Sampler Implementation used for edge sampling from graph.
 """
-from typing import List
 
 from networkx import DiGraph
 
-
-def out_degree_distribution(graph: DiGraph, use_weight: bool = True) -> List[int]:
-    if use_weight:
-        return [graph.out_degree(node, weight="weight") for node in graph.nodes()]
-    return [graph.out_degree(node) for node in graph.nodes()]
-
-
-def in_degree_distribution(graph: DiGraph, use_weight: bool = True) -> List[int]:
-    if use_weight:
-        return [graph.in_degree(node, weight="weight") for node in graph.nodes()]
-    return [graph.in_degree(node) for node in graph.nodes()]
-
-
-def degree_distribution(graph: DiGraph, use_weight: bool = True) -> List[int]:
-    if use_weight:
-        return [graph.degree(node, weight="weight") for node in graph.nodes()]
-    return [graph.degree(node) for node in graph.nodes()]
+from smore.pronet.utils import degree_distribution, in_degree_distribution
 
 
 class EdgeSampler:
@@ -45,3 +28,11 @@ class EdgeSampler:
             edge_with_data[2]  # edge_with_data = (source_node, target_node, weight)
             for edge_with_data in self.graph.edges.data("weight", default=1)
         ]
+
+    def sample_edge(self):
+        """
+        Sample edge from graph.
+
+        :return: Edge sampled from graph.
+        """
+        pass

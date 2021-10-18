@@ -20,9 +20,3 @@ class BaseModel:
         Train the model
         """
         raise NotImplementedError
-
-    def export(self, path: Path):
-        """
-        Export the model
-        """
-        raise NotImplementedError

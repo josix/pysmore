@@ -1,8 +1,6 @@
 """
 Matrix Factorization Model
 """
-from pathlib import Path
-
 from loguru import logger
 from networkx import DiGraph
 from numpy import double, ndarray
@@ -57,24 +55,26 @@ class MatrixFactorization(BaseModel):  # pylint: disable=too-many-instance-attri
         Train the model
         """
 
-    def export(self, path: Path):
-        """
-        Export the embeding in a JSON format
-        """
-
 
 if __name__ == "__main__":
-    import time
 
-    from numpy import random, ones, concatenate
+    def main():
+        """
+        Main function
+        """
+        import time
 
-    edge_nums = [10 ** 7, 10 ** 6, 10 ** 5]
-    for edge_num in edge_nums:
-        logger.info("Running edge_num: {}".format(edge_num))
-        edges = random.randint(0, 10000, size=(edge_num, 2))
-        weights = ones((edge_num, 1))
-        edge_list = concatenate((edges, weights), axis=1)
-        loading_start = time.time()
-        matrix_factorization = MatrixFactorization(edge_list=edge_list)
-        loading_end = time.time()
-        logger.info("Loading cost {:.2f}s", loading_end - loading_start)
+        from numpy import concatenate, ones, random
+
+        edge_nums = [10 ** 7, 10 ** 6, 10 ** 5]
+        for edge_num in edge_nums:
+            logger.info("Running edge_num: {}".format(edge_num))
+            edges = random.randint(0, 10000, size=(edge_num, 2))
+            weights = ones((edge_num, 1))
+            edge_list = concatenate((edges, weights), axis=1)
+            loading_start = time.time()
+            matrix_factorization = MatrixFactorization(edge_list=edge_list)
+            loading_end = time.time()
+            logger.info("Loading cost {:.2f}s", loading_end - loading_start)
+
+    main()
