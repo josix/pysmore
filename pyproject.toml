@@ -20,6 +20,7 @@ black = "^21.8b0"
 mypy = "^0.910"
 invoke = "^1.6.0"
 flake8 = "^3.9.2"
+coverage = {extras = ["toml"], version = "^6.0.2"}
 
 [tool.poetry.scripts]
 lint = "tasks.lint:lint"
@@ -44,3 +45,9 @@ exclude = '''
   | dist
 )/
 '''
+
+[tool.coverage.run]
+omit = [".*", "*/site-packages/*"]
+
+[tool.coverage.report]
+fail_under = 100

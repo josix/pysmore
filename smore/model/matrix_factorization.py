@@ -1,13 +1,15 @@
 """
 Matrix Factorization Model
 """
+from typing import Optional
+
 from loguru import logger
 from networkx import DiGraph
 from numpy import double, ndarray
 from tqdm import tqdm
 
+from smore.core.sampler import EdgeSampler
 from smore.model.base import BaseModel
-from smore.pronet.sampler import EdgeSampler
 
 
 class MatrixFactorization(BaseModel):  # pylint: disable=too-many-instance-attributes
@@ -26,16 +28,20 @@ class MatrixFactorization(BaseModel):  # pylint: disable=too-many-instance-attri
         dimension: int = 64,
     ):  # pylint: disable=too-many-arguments
         super().__init__(dimension=dimension)
-        self.edge_list = edge_list
+        self.edge_list: ndarray = edge_list
         if not isinstance(self.edge_list, ndarray):
             raise ValueError("edge_list must be a numpy array")
-        assert self.edge_list.shape[1] == 3, "edge_list must have 3 columns"
+        if self.edge_list.shape[1] > 3 or self.edge_list.shape[1] < 2:
+            raise ValueError(
+                "edge_list must be formatted in"
+                " [source_node, target_node]/[sorce_node, target_node, weight]",
+            )
         self.edge_list = self.edge_list.astype(double)
-        self.graph = DiGraph()
-        self.edge_num = None
-        self.node_num = None
+        self.graph: DiGraph = DiGraph()
+        self.edge_num: Optional[int] = None
+        self.node_num: Optional[int] = None
         self.build_graph()
-        self.sampler = EdgeSampler(graph=self.graph)
+        self.sampler: EdgeSampler = EdgeSampler(graph=self.graph)
 
     def build_graph(self):
         """
@@ -43,7 +49,10 @@ class MatrixFactorization(BaseModel):  # pylint: disable=too-many-instance-attri
         """
         with tqdm(total=self.edge_list.shape[0], desc="Loading Graph") as progress_bar:
             for edge in self.edge_list:
-                self.graph.add_edge(edge[0], edge[1], weight=edge[2])
+                if len(edge) == 3:
+                    self.graph.add_edge(edge[0], edge[1], weight=edge[2])
+                else:
+                    self.graph.add_edge(edge[0], edge[1], weight=1)
                 progress_bar.update(1)
         self.edge_num = self.graph.number_of_edges()
         self.node_num = self.graph.number_of_nodes()
@@ -56,9 +65,9 @@ class MatrixFactorization(BaseModel):  # pylint: disable=too-many-instance-attri
         """
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
 
-    def main():
+    def main():  # pylint: disable=all
         """
         Main function
         """

@@ -1,10 +1,9 @@
 """
 Base model class
 """
-from pathlib import Path
 
 
-class BaseModel:
+class BaseModel:  # pylint: disable=too-few-public-methods # pragma: no cover
     """
     Base model class
     """
