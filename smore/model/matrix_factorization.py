@@ -36,7 +36,10 @@ class MatrixFactorization(BaseModel):  # pylint: disable=too-many-instance-attri
                 "edge_list must be formatted in"
                 " [source_node, target_node]/[sorce_node, target_node, weight]",
             )
-        self.edge_list = self.edge_list.astype(double)
+        # TODO: Check node_id is int
+        self.edge_list = self.edge_list.astype(
+            double
+        )  # Transform the type of weight to double
         self.graph: DiGraph = DiGraph()
         self.edge_num: Optional[int] = None
         self.node_num: Optional[int] = None
@@ -50,9 +53,17 @@ class MatrixFactorization(BaseModel):  # pylint: disable=too-many-instance-attri
         with tqdm(total=self.edge_list.shape[0], desc="Loading Graph") as progress_bar:
             for edge in self.edge_list:
                 if len(edge) == 3:
-                    self.graph.add_edge(edge[0], edge[1], weight=edge[2])
+                    self.graph.add_edge(
+                        int(edge[0]),
+                        int(edge[1]),
+                        weight=edge[2],
+                    )
                 else:
-                    self.graph.add_edge(edge[0], edge[1], weight=1)
+                    self.graph.add_edge(
+                        int(edge[0]),
+                        int(edge[1]),
+                        weight=1,
+                    )
                 progress_bar.update(1)
         self.edge_num = self.graph.number_of_edges()
         self.node_num = self.graph.number_of_nodes()

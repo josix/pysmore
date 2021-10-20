@@ -3,6 +3,7 @@ Edge Sampler Implementation used for edge sampling from graph.
 """
 from typing import List
 
+import numpy as np
 from networkx import DiGraph
 from numpy.random import Generator, default_rng
 
@@ -35,9 +36,14 @@ class EdgeSampler:  # pylint: disable=too-few-public-methods
             for edge_with_data in self.graph.edges.data("weight", default=1)
         ]
 
-    def sample_edge(self):
+    def sample_edges(self, size: int = 1000) -> np.ndarray:
         """
-        Sample edge from graph.
+        Sample edges from graph.
 
+        :param size: Number of edges to sample.
         :return: Edge sampled from graph.
         """
+        edges: np.ndarray = self.rand_generator.choice(
+            list(self.graph.edges), size=size, p=self.edge_distribution
+        )
+        return edges
