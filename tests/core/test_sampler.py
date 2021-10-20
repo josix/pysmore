@@ -7,7 +7,9 @@ import pytest
 from smore.core.sampler import EdgeSampler
 from smore.core.utils import (
     degree_distribution,
+    edge_distribution,
     in_degree_distribution,
+    normalize,
     out_degree_distribution,
 )
 from smore.model.matrix_factorization import MatrixFactorization
@@ -33,6 +35,21 @@ mf_graph = get_mf_graph()
 
 
 @pytest.mark.parametrize(
+    "array,expected_array",
+    [
+        (np.array([2, 4, 4]), [0.2, 0.4, 0.4]),
+        ([2, 4, 4], [0.2, 0.4, 0.4]),
+        ((2, 4, 4), [0.2, 0.4, 0.4]),
+    ],
+)
+def test_normalize(array, expected_array):
+    """
+    Test normalize function
+    """
+    assert normalize(array) == pytest.approx(expected_array)
+
+
+@pytest.mark.parametrize(
     "graph,expected_distribution,use_weight",
     [
         (mf_graph, [0.4, 0.2, 0.4, 0], True),
@@ -43,7 +60,8 @@ def test_out_degree_distribution(graph, expected_distribution, use_weight):
     """
     Test out_degree_distribution working as expected.
     """
-
+    expected_distribution = np.array(expected_distribution)
+    expected_distribution = expected_distribution / np.sum(expected_distribution)
     distribution = out_degree_distribution(graph=graph, use_weight=use_weight)
     assert distribution == pytest.approx(expected_distribution)
 
@@ -59,6 +77,8 @@ def test_in_degree_distribution(graph, expected_distribution, use_weight):
     """
     Test out_degree_distribution working as expected.
     """
+    expected_distribution = np.array(expected_distribution)
+    expected_distribution = expected_distribution / np.sum(expected_distribution)
     distribution = in_degree_distribution(graph=graph, use_weight=use_weight)
     assert distribution == pytest.approx(expected_distribution)
 
@@ -74,7 +94,26 @@ def test_all_degree_distribution(graph, expected_distribution, use_weight):
     """
     Test degree_distribution working as expected.
     """
+    expected_distribution = np.array(expected_distribution)
+    expected_distribution = expected_distribution / np.sum(expected_distribution)
     distribution = degree_distribution(graph=graph, use_weight=use_weight)
+    assert distribution == pytest.approx(expected_distribution)
+
+
+@pytest.mark.parametrize(
+    "graph,expected_distribution,use_weight",
+    [
+        (mf_graph, [0.1, 0.3, 0.2, 0.4], True),
+        (mf_graph, [1, 1, 1, 1], False),
+    ],
+)
+def test_edge_distribution(graph, expected_distribution, use_weight):
+    """
+    Test edge_distribution working as expected.
+    """
+    expected_distribution = np.array(expected_distribution)
+    expected_distribution = expected_distribution / np.sum(expected_distribution)
+    distribution = edge_distribution(graph=graph, use_weight=use_weight)
     assert distribution == pytest.approx(expected_distribution)
 
 

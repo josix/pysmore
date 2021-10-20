@@ -26,6 +26,7 @@ class MatrixFactorization(BaseModel):  # pylint: disable=too-many-instance-attri
         self,
         edge_list: ndarray,
         dimension: int = 64,
+        sample_times: int = 5,
     ):  # pylint: disable=too-many-arguments
         super().__init__(dimension=dimension)
         self.edge_list: ndarray = edge_list
@@ -45,6 +46,7 @@ class MatrixFactorization(BaseModel):  # pylint: disable=too-many-instance-attri
         self.node_num: Optional[int] = None
         self.build_graph()
         self.sampler: EdgeSampler = EdgeSampler(graph=self.graph)
+        self.sample_times = sample_times
 
     def build_graph(self):
         """
@@ -70,10 +72,14 @@ class MatrixFactorization(BaseModel):  # pylint: disable=too-many-instance-attri
         logger.info("#nodes: {}", self.node_num)
         logger.info("#edges: {}", self.edge_num)
 
-    def train(self):
+    def train(self):  # pragma: no cover # temporary no cover
         """
         Train the model
         """
+        with tqdm(total=self.sample_times, desc="Training") as progress_bar:
+            for i in range(self.sample_times):
+                edges = self.sampler.sample_edges(size=10 ** 6)
+                progress_bar.update(1)
 
 
 if __name__ == "__main__":  # pragma: no cover
@@ -86,7 +92,7 @@ if __name__ == "__main__":  # pragma: no cover
 
         from numpy import concatenate, ones, random
 
-        edge_nums = [10 ** 7, 10 ** 6, 10 ** 5]
+        edge_nums = [10 ** 5, 5 * 10 ** 5, 10 ** 6, 3 * 10 ** 6, 5 * 10 ** 6]
         for edge_num in edge_nums:
             logger.info("Running edge_num: {}".format(edge_num))
             edges = random.randint(0, 10000, size=(edge_num, 2))
@@ -94,6 +100,7 @@ if __name__ == "__main__":  # pragma: no cover
             edge_list = concatenate((edges, weights), axis=1)
             loading_start = time.time()
             matrix_factorization = MatrixFactorization(edge_list=edge_list)
+            matrix_factorization.train()
             loading_end = time.time()
             logger.info("Loading cost {:.2f}s", loading_end - loading_start)
 
