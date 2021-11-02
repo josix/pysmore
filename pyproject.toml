@@ -5,12 +5,13 @@ description = ""
 authors = ["Josix <josixwang@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "3.9"
 loguru = "^0.5.3"
 pydantic = "^1.8.2"
-numpy = "1.21.0"
+numpy = "1.20.0"
 networkx = "^2.6.3"
 tqdm = "^4.62.2"
+numba = "^0.54.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

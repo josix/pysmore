@@ -3,11 +3,12 @@ Matrix Factorization Model
 """
 from typing import Optional
 
+import numpy as np
 from loguru import logger
 from networkx import DiGraph
-from numpy import double, ndarray
 from tqdm import tqdm
 
+from smore.core.optimizer import PairOptimizer
 from smore.core.sampler import EdgeSampler
 from smore.model.base import BaseModel
 
@@ -24,13 +25,14 @@ class MatrixFactorization(BaseModel):  # pylint: disable=too-many-instance-attri
 
     def __init__(
         self,
-        edge_list: ndarray,
+        edge_list: np.ndarray,
         dimension: int = 64,
         sample_times: int = 5,
     ):  # pylint: disable=too-many-arguments
         super().__init__(dimension=dimension)
-        self.edge_list: ndarray = edge_list
-        if not isinstance(self.edge_list, ndarray):
+        self.edge_list: np.ndarray = edge_list
+        self.sample_times = sample_times
+        if not isinstance(self.edge_list, np.ndarray):
             raise ValueError("edge_list must be a numpy array")
         if self.edge_list.shape[1] > 3 or self.edge_list.shape[1] < 2:
             raise ValueError(
@@ -39,16 +41,27 @@ class MatrixFactorization(BaseModel):  # pylint: disable=too-many-instance-attri
             )
         # TODO: Check node_id is int
         self.edge_list = self.edge_list.astype(
-            double
+            np.double
         )  # Transform the type of weight to double
         self.graph: DiGraph = DiGraph()
         self.edge_num: Optional[int] = None
         self.node_num: Optional[int] = None
-        self.build_graph()
+        self._build_graph()
         self.sampler: EdgeSampler = EdgeSampler(graph=self.graph)
-        self.sample_times = sample_times
+        self.all_embedding: Optional[np.ndarray] = None
+        self._initialize_embedding()
+        if self.all_embedding is not None:
+            self.optimizer: PairOptimizer = PairOptimizer(
+                self.all_embedding, total_update_times=self.sample_times
+            )
 
-    def build_graph(self):
+    def _initialize_embedding(self):
+        """
+        Initialize the embedding
+        """
+        self.all_embedding = np.random.rand(self.node_num, self.dimension)
+
+    def _build_graph(self):
         """
         Build the graph from the given ``edge_list``
         """
@@ -72,13 +85,20 @@ class MatrixFactorization(BaseModel):  # pylint: disable=too-many-instance-attri
         logger.info("#nodes: {}", self.node_num)
         logger.info("#edges: {}", self.edge_num)
 
-    def train(self):  # pragma: no cover # temporary no cover
+    def train(self):  # param: no cover
         """
         Train the model
         """
-        with tqdm(total=self.sample_times, desc="Training") as progress_bar:
+        if self.all_embedding is None:
+            raise ValueError("Embedding is not initialized")
+        with tqdm(
+            total=self.sample_times, desc="Training"
+        ) as progress_bar:  # TODO: Remove the progress bar and use the logger
             for i in range(self.sample_times):
-                edges = self.sampler.sample_edges(size=10 ** 6)
+                edges = self.sampler.sample_edges(
+                    size=10 ** 6, with_weight=True
+                )  # TODO: make sample times multiplier configurable
+                self.optimizer.dot_product_loss(edges, l2_reg=True)
                 progress_bar.update(1)
 
 
