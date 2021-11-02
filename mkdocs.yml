@@ -1,0 +1,9 @@
+site_name: smore
+nav:
+  - Home: README.md
+  - Contributing: contributing.md
+theme:
+  name: 'material'
+repo_url: https://github.com/josix/smore-py.git
+remote_branch: gh-pages
+remote_name: origin

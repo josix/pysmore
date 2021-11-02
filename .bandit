@@ -1,0 +1,3 @@
+[bandit]
+targets: smore
+exclude: tests

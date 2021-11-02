@@ -1,8 +1,13 @@
-"""
-Module that collects all tha available invoking commands
-"""
 from invoke import Collection
 
-from tasks import lint, reformat
+from tasks import doc, env, git, secure, style, test
+from tasks.build import build_ns
 
-namespace = Collection(reformat, lint)
+ns = Collection()
+ns.add_collection(env)
+ns.add_collection(git)
+ns.add_collection(test)
+ns.add_collection(style)
+ns.add_collection(build_ns)
+ns.add_collection(doc)
+ns.add_collection(secure)

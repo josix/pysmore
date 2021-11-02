@@ -1,1 +1,0 @@
-# SMORe-py
