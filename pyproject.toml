@@ -1,39 +1,19 @@
-[tool.poetry]
-name = "smore-py"
-version = "0.1.0"
-description = ""
-authors = ["Josix <josixwang@gmail.com>"]
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.0.1"
+tag_format = "$version"
+version_files = [
+    "pyproject.toml:version"
+]
 
-[tool.poetry.dependencies]
-python = "3.9"
-loguru = "^0.5.3"
-pydantic = "^1.8.2"
-numpy = "1.20.0"
-networkx = "^2.6.3"
-tqdm = "^4.62.2"
-numba = "^0.54.1"
-
-[tool.poetry.dev-dependencies]
-pytest = "^5.2"
-pylint = "^2.10.2"
-isort = "^5.9.3"
-black = "^21.8b0"
-mypy = "^0.910"
-invoke = "^1.6.0"
-flake8 = "^3.9.2"
-coverage = {extras = ["toml"], version = "^6.0.2"}
-
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
 
 [tool.black]
-line_length = 88
+line-length = 88
 include = '\.pyi?$'
 exclude = '''
 /(
-    \.git
+    \.eggs
+  | \.git
   | \.hg
   | \.mypy_cache
   | \.tox
@@ -45,8 +25,125 @@ exclude = '''
 )/
 '''
 
-[tool.coverage.run]
-omit = [".*", "*/site-packages/*"]
 
-[tool.coverage.report]
-fail_under = 100
+[tool.isort]
+profile = "black"
+
+
+[tool.pylint]
+    [tool.pylint.messages_control]
+    disable = [
+        "bad-continuation",
+        "missing-function-docstring",
+        "missing-module-docstring",
+        "invalid-name"
+    ]
+
+    [tool.pylint.format]
+    max-line-length = 88
+
+
+[tool.mypy]
+files = [
+    "pysmore",
+    "tests"
+]
+ignore_missing_imports = true
+follow_imports = "silent"
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_unused_configs = true
+
+
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = "tests"
+addopts = "--strict-markers"
+norecursedirs = [
+    ".*",
+    "build",
+    "dist",
+    "CVS",
+    "_darcs",
+    "{arch}",
+    "*.egg",
+    "venv",
+    "env",
+    "virtualenv"
+]
+
+
+[tool.coverage]
+    [tool.coverage.report]
+    show_missing = true
+    exclude_lines = [
+        # Have to re-enable the standard pragma
+        'pragma: no cover',
+
+        # Don't complain about missing debug-only code:
+        'def __repr__',
+        'if self\.debug',
+
+        # Don't complain if tests don't hit defensive assertion code:
+        'raise AssertionError',
+        'raise NotImplementedError',
+
+        # Don't complain if non-runnable code isn't run:
+        'if 0:',
+        'if __name__ == .__main__.:'
+    ]
+    omit = [
+        'env/*',
+        'venv/*',
+        '*/virtualenv/*',
+        '*/virtualenvs/*',
+        '*/tests/*'
+    ]
+
+[tool.poetry]
+name = "pysmore"
+version = "0.0.1"
+authors = ["Josix Wang <josixwang@gmail.com>"]
+description = "Python version of SMORe: Modularize Graph Embedding for Recommendation"
+license = "MIT license"
+readme = "docs/README.md"
+repository = "https://github.com/josix/pysmore"
+
+[tool.poetry.dependencies]
+python = "3.9"
+numpy = "1.20.0"
+numba = "^0.54.1"
+networkx = "^2.6.3"
+loguru = "^0.5.3"
+tqdm = "^4.62.3"
+
+[tool.poetry.dev-dependencies]
+# task management
+invoke = "^1.4.1"
+# test
+pytest = "^6.0.1"
+pytest-cov = "^2.8.1"
+pytest-mock = "^3.0.0"
+pytest-xdist = "^1.31.0"
+hypothesis = "^5.8.0"
+coverage = {extras = ["toml"], version = "^5.0.4"}
+# style
+flake8 = "^3.7.9"
+pylint = "^2.7.0"
+mypy = "^0.910"
+black = "^21.7b0"
+isort = "^5.0.0"
+# security
+bandit = "^1.6.2"
+safety = "^1.8.7"
+# git
+commitizen = "^2.4.0"
+pre-commit = "^2.2.0"
+# documentation
+mkdocs = "^1.1"
+mkdocs-material = "^7.0.6"
+
+[build-system]
+requires = ["poetry>=1.0.0"]
+build-backend = "poetry.masonry.api"

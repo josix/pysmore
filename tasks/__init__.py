@@ -1,19 +1,13 @@
-"""
-Module that collects all tha available invoking commands
-"""
-from invoke import Collection, task
+from invoke import Collection
 
-from tasks import lint, reformat, test
+from tasks import doc, env, git, secure, style, test
+from tasks.build import build_ns
 
-
-@task
-def all_task(ctx):
-    """
-    Invokes all tasks
-    """
-    ctx.run("invoke reformat")
-    ctx.run("invoke lint")
-    ctx.run("invoke test")
-
-
-namespace = Collection(reformat, lint, test, all_task)
+ns = Collection()
+ns.add_collection(env)
+ns.add_collection(git)
+ns.add_collection(test)
+ns.add_collection(style)
+ns.add_collection(build_ns)
+ns.add_collection(doc)
+ns.add_collection(secure)

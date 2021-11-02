@@ -6,7 +6,7 @@ import numpy as np
 from networkx import DiGraph
 from numpy.random import Generator, default_rng
 
-from smore.core.sampler.utils import (
+from pysmore.core.sampler.utils import (
     degree_distribution,
     edge_distribution,
     in_degree_distribution,

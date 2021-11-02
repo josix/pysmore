@@ -4,7 +4,7 @@ Unit tests for the sampler utilities
 import numpy as np
 import pytest
 
-from smore.core.sampler.utils import (
+from pysmore.core.sampler.utils import (
     degree_distribution,
     edge_distribution,
     in_degree_distribution,

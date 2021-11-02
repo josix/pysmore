@@ -4,7 +4,7 @@ Unit tests for MF model
 import pytest
 from numpy import array, double
 
-from smore.model.matrix_factorization import MatrixFactorization
+from pysmore.model.matrix_factorization import MatrixFactorization
 
 
 @pytest.mark.parametrize(

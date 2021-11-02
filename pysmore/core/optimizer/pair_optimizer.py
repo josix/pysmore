@@ -2,9 +2,8 @@
 Pair optimizer implementation used for optimizing pairs of nodes.
 """
 import numpy as np
-from numba import config, njit, prange, threading_layer
 
-from smore.core.optimizer.helper.loss_function import compute_dot_product_loss
+from pysmore.core.optimizer.helper.loss_function import compute_dot_product_loss
 
 
 class PairOptimizer:  # pylint: disable=too-few-public-methods

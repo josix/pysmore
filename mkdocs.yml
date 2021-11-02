@@ -1,0 +1,9 @@
+site_name: pysmore
+nav:
+  - Home: README.md
+  - Contributing: contributing.md
+theme:
+  name: 'material'
+repo_url: https://github.com/josix/pysmore
+remote_branch: gh-pages
+remote_name: origin

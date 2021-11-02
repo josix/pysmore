@@ -8,9 +8,9 @@ from loguru import logger
 from networkx import DiGraph
 from tqdm import tqdm
 
-from smore.core.optimizer import PairOptimizer
-from smore.core.sampler import EdgeSampler
-from smore.model.base import BaseModel
+from pysmore.core.optimizer import PairOptimizer
+from pysmore.core.sampler import EdgeSampler
+from pysmore.model.base import BaseModel
 
 
 class MatrixFactorization(BaseModel):  # pylint: disable=too-many-instance-attributes

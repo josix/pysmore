@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from smore.model.matrix_factorization import MatrixFactorization
+from pysmore.model.matrix_factorization import MatrixFactorization
 
 
 @pytest.fixture(scope="session")

@@ -1,21 +1,18 @@
-"""Test Python scripts through invoking pytest and coverage"""
 from invoke import task
 
+from tasks.common import VENV_PREFIX
+
+
+@task(default=True)
+def run(ctx, allow_no_tests=False):
+    """Run test cases"""
+    result = ctx.run(f"{VENV_PREFIX} pytest", pty=True, warn=True)
+    if allow_no_tests and result.exited == 5:
+        exit(0)
+    exit(result.exited)
+
 
 @task
-def pytest(ctx):
-    """Run pytest"""
-    ctx.run("pytest")
-
-
-@task
-def coverage(ctx):
-    """Run pytest with coverage"""
-    ctx.run("coverage run -m pytest")
-    ctx.run("coverage report -m")
-
-
-@task(pre=[pytest, coverage], default=True)
-def test(ctx):  # pylint: disable=unused-argument
-    """Reformat Python scripts through coverage and pytest"""
-    return
+def cov(ctx):
+    """Run test covreage check"""
+    ctx.run(f"{VENV_PREFIX} pytest --cov=pysmore tests/", pty=True)

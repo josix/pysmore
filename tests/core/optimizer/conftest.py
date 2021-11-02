@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from smore.core.optimizer import PairOptimizer
+from pysmore.core.optimizer import PairOptimizer
 
 
 @pytest.fixture(scope="session")

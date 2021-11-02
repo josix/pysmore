@@ -1,0 +1,26 @@
+{
+  "template": "https://github.com/Lee-W/cookiecutter-python-template",
+  "commit": "95b9897dc83fc93eee9eab0f11e23bc116172089",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "project_name": "pysmore",
+      "project_slug": "pysmore",
+      "project_description": "Python version of SMORe: Modularize Graph Embedding for Recommendation",
+      "github_username": "josix",
+      "github_url": "https://github.com/josix/pysmore",
+      "author_name": "Josix Wang",
+      "author_email": "josixwang@gmail.com",
+      "python_version": "3.9",
+      "dependency_management_tool": "poetry",
+      "default_branch": "main",
+      "use_strict_mypy_config": "n",
+      "build_pypi_package": "y",
+      "build_docker_image": "n",
+      "open_source_license": "MIT license",
+      "_template_version": "1.1.2",
+      "_template": "https://github.com/Lee-W/cookiecutter-python-template"
+    }
+  },
+  "directory": null
+}

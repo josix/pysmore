@@ -3,7 +3,7 @@ Unit tests for the edge sampler
 """
 import pytest
 
-from smore.core.sampler.edge_sampler import EdgeSampler
+from pysmore.core.sampler.edge_sampler import EdgeSampler
 
 
 @pytest.mark.parametrize(

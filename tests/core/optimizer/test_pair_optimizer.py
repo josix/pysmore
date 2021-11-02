@@ -3,7 +3,7 @@ Unit tests for the pair optimizer
 """
 import pytest
 
-from smore.core.optimizer import PairOptimizer
+from pysmore.core.optimizer import PairOptimizer
 
 
 @pytest.mark.skip()
