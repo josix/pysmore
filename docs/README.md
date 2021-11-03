@@ -10,7 +10,7 @@
 
 # pysmore
 
-Python version of SMORe: Modularize Graph Embedding for Recommendation
+Python version of [SMORe: Modularize Graph Embedding for Recommendation](https://github.com/cnclabs/smore)
 
 ## Getting Started
 
