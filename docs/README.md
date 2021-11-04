@@ -16,7 +16,7 @@ pysmore is the python version of [SMORe: Modularize Graph Embedding for Recommen
 
 ### Prerequisites
 * [Python](https://www.python.org/downloads/)
-* [OpenMP](https://www.openmp.org/)
+* [OpenMP](https://www.openmp.org/) (Optional, it is used for better training performance through `numba threading layer`)
 
 ## Usage
 
