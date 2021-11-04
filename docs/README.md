@@ -10,12 +10,13 @@
 
 # pysmore
 
-Python version of [SMORe: Modularize Graph Embedding for Recommendation](https://github.com/cnclabs/smore)
+pysmore is the python version of [SMORe: Modularize Graph Embedding for Recommendation](https://github.com/cnclabs/smore). SMORe is a framework helps compute variant weighted network embedding through graph embedding technique.
 
 ## Getting Started
 
 ### Prerequisites
 * [Python](https://www.python.org/downloads/)
+* [OpenMP](https://www.openmp.org/)
 
 ## Usage
 
