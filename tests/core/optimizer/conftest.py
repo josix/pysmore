@@ -9,8 +9,8 @@ def dummy_optimizer():
     """
     Dummy optimizer for testing.
     """
-    node_num = 30
-    dimension = 32
+    node_num = 5
+    dimension = 4
     return PairOptimizer(
         embeddings=np.random.rand(node_num, dimension),
         total_update_times=5,

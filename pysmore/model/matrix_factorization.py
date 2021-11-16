@@ -28,10 +28,12 @@ class MatrixFactorization(BaseModel):  # pylint: disable=too-many-instance-attri
         edge_list: np.ndarray,
         dimension: int = 64,
         sample_times: int = 5,
+        sample_size: int = 1000000,
     ):  # pylint: disable=too-many-arguments
         super().__init__(dimension=dimension)
         self.edge_list: np.ndarray = edge_list
         self.sample_times = sample_times
+        self.sample_size = sample_size
         if not isinstance(self.edge_list, np.ndarray):
             raise ValueError("edge_list must be a numpy array")
         if self.edge_list.shape[1] > 3 or self.edge_list.shape[1] < 2:
@@ -52,7 +54,9 @@ class MatrixFactorization(BaseModel):  # pylint: disable=too-many-instance-attri
         self._initialize_embedding()
         if self.all_embedding is not None:
             self.optimizer: PairOptimizer = PairOptimizer(
-                self.all_embedding, total_update_times=self.sample_times
+                self.all_embedding,
+                total_update_times=self.sample_times,
+                sample_size=self.sample_size,
             )
 
     def _initialize_embedding(self):
@@ -85,21 +89,22 @@ class MatrixFactorization(BaseModel):  # pylint: disable=too-many-instance-attri
         logger.info("#nodes: {}", self.node_num)
         logger.info("#edges: {}", self.edge_num)
 
-    def train(self):  # param: no cover
+    def train(self):  # pragma: no cover
         """
         Train the model
         """
         if self.all_embedding is None:
             raise ValueError("Embedding is not initialized")
-        with tqdm(
-            total=self.sample_times, desc="Training"
-        ) as progress_bar:  # TODO: Remove the progress bar and use the logger
-            for i in range(self.sample_times):
-                edges = self.sampler.sample_edges(
-                    size=10 ** 6, with_weight=True
-                )  # TODO: make sample times multiplier configurable
-                self.optimizer.dot_product_loss(edges, l2_reg=True)
-                progress_bar.update(1)
+        logger.info("Start training")
+        for i in range(self.sample_times):
+            edges = self.sampler.sample_edges(size=self.sample_size, with_weight=True)
+            self.optimizer.compute_loss(edges, l2_reg=True)
+            logger.info(
+                "Iteration {}/{} with loss {}",
+                i + 1,
+                self.sample_times,
+                self.optimizer.loss,
+            )
 
 
 if __name__ == "__main__":  # pragma: no cover
