@@ -1,9 +1,17 @@
 """
 Pair optimizer implementation used for optimizing pairs of nodes.
 """
+from dataclasses import dataclass
+
 import numpy as np
 
-from pysmore.core.optimizer.helper.loss_function import compute_raw_dot_product_loss
+from pysmore.core.optimizer.helper.loss_function import compute_dot_product_update
+
+
+@dataclass
+class UpdateResult:  # pylint: disable=too-few-public-methods
+    update_embedding: np.ndarray
+    loss: float = 0.0
 
 
 class PairOptimizer:  # pylint: disable=too-few-public-methods, too-many-instance-attributes
@@ -11,7 +19,7 @@ class PairOptimizer:  # pylint: disable=too-few-public-methods, too-many-instanc
     Pair optimizer implementation used for optimizing pairs of nodes.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         embeddings: np.ndarray,
         total_update_times: int,
@@ -26,7 +34,7 @@ class PairOptimizer:  # pylint: disable=too-few-public-methods, too-many-instanc
         self.total_update_times: int = total_update_times
         self.sample_size: int = sample_size
         self.n_update: int = 0
-        self._loss: np.ndarray = np.zeros(self.embeddings.shape)
+        self.loss: float = 0.0
 
     def _update_learning_rate(self, learning_rate: float):
         """
@@ -40,16 +48,9 @@ class PairOptimizer:  # pylint: disable=too-few-public-methods, too-many-instanc
         """
         Resets the loss.
         """
-        self._loss = np.zeros(self.embeddings.shape)
+        self.loss = 0.0
 
-    @property
-    def loss(self):  # pragma: no cover
-        """
-        Returns the loss.
-        """
-        return self._loss.sum(dtype=np.float128)
-
-    def compute_loss(
+    def update(
         self,
         training_edges: np.ndarray,
         l2_reg: bool = False,
@@ -58,13 +59,16 @@ class PairOptimizer:  # pylint: disable=too-few-public-methods, too-many-instanc
         Train the embeddings using the dot product loss by given training edges.
         """
         self._reset_loss()
-        self._loss = compute_raw_dot_product_loss(self.embeddings, training_edges)
+        update_result = compute_dot_product_update(self.embeddings, training_edges)
+        dot_product_update = UpdateResult(update_result[0], update_result[1])
+        update_embedding: np.ndarray = dot_product_update.update_embedding
+        self.loss = dot_product_update.loss
         if l2_reg:
             self.embeddings += self.learning_rate * (
-                self._loss - self.λ * self.embeddings
+                update_embedding - self.λ * self.embeddings
             )
         else:
-            self.embeddings += self.learning_rate * self._loss
+            self.embeddings += self.learning_rate * update_embedding
         self.n_update += 1
         self._update_learning_rate(
             1.0 - (self.n_update / (self.total_update_times * self.sample_size))

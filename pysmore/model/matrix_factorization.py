@@ -98,13 +98,16 @@ class MatrixFactorization(BaseModel):  # pylint: disable=too-many-instance-attri
         logger.info("Start training")
         for i in range(self.sample_times):
             edges = self.sampler.sample_edges(size=self.sample_size, with_weight=True)
-            self.optimizer.compute_loss(edges, l2_reg=True)
+            self.optimizer.update(edges, l2_reg=True)
             logger.info(
                 "Iteration {}/{} with loss {}",
                 i + 1,
                 self.sample_times,
                 self.optimizer.loss,
             )
+            if abs(self.optimizer.loss) < 1e-5:
+                logger.info("Loss is close to zero, stop training")
+                break
 
 
 if __name__ == "__main__":  # pragma: no cover
@@ -127,6 +130,6 @@ if __name__ == "__main__":  # pragma: no cover
             matrix_factorization = MatrixFactorization(edge_list=edge_list)
             matrix_factorization.train()
             loading_end = time.time()
-            logger.info("Loading cost {:.2f}s", loading_end - loading_start)
+            logger.info("Training cost {:.2f}s", loading_end - loading_start)
 
     main()

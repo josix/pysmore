@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 from pysmore.core.optimizer.helper.loss_function import (
-    compute_raw_dot_product_loss,
+    compute_dot_product_update,
     dot_product,
 )
 
@@ -35,9 +35,9 @@ def test_dot_product(vector1, vector2, expected_output):
         )
     ],
 )
-def test_compute_raw_dot_product_loss(embeddings, training_edges, expected_loss):
+def test_compute_dot_product_update(embeddings, training_edges, expected_loss):
     """
     Test dot product loss given embeddings and training edges.
     """
-    loss = compute_raw_dot_product_loss(embeddings, training_edges)
-    assert loss == pytest.approx(expected_loss)
+    update_embedding = compute_dot_product_update(embeddings, training_edges)[0]
+    assert update_embedding == pytest.approx(expected_loss)

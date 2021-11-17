@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 from pysmore.core.optimizer import PairOptimizer
-from pysmore.core.optimizer.helper.loss_function import compute_raw_dot_product_loss
+from pysmore.core.optimizer.helper.loss_function import compute_dot_product_update
 
 
 @pytest.mark.parametrize(
@@ -59,13 +59,15 @@ def test_compute_loss(dummy_optimizer: PairOptimizer, training_edges, l2_reg):
     """
     embeddings = dummy_optimizer.embeddings.copy()
     update_times = dummy_optimizer.n_update
-    raw_loss = compute_raw_dot_product_loss(dummy_optimizer.embeddings, training_edges)
+    update_embedding = compute_dot_product_update(
+        dummy_optimizer.embeddings, training_edges
+    )[0]
     if l2_reg:
         embeddings += dummy_optimizer.learning_rate * (
-            raw_loss - dummy_optimizer.λ * embeddings
+            update_embedding - dummy_optimizer.λ * embeddings
         )
     else:
-        embeddings += dummy_optimizer.learning_rate * raw_loss
-    dummy_optimizer.compute_loss(training_edges, l2_reg)
+        embeddings += dummy_optimizer.learning_rate * update_embedding
+    dummy_optimizer.update(training_edges, l2_reg)
     assert dummy_optimizer.embeddings == pytest.approx(embeddings)
     assert dummy_optimizer.n_update == update_times + 1
