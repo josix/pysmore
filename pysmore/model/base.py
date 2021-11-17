@@ -24,12 +24,6 @@ class BaseModel:  # pylint: disable=too-few-public-methods # pragma: no cover
         """
         raise NotImplementedError
 
-    def _initialize_embedding(self):
-        """
-        Initialize the embedding
-        """
-        raise NotImplementedError
-
     def train(self):
         """
         Train the model

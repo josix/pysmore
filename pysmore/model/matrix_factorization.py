@@ -29,6 +29,8 @@ class MatrixFactorization(BaseModel):  # pylint: disable=too-many-instance-attri
         dimension: int = 64,
         sample_times: int = 5,
         sample_size: int = 1000000,
+        lr: float = 0.025,
+        l2_reg: float = 0.01,
     ):  # pylint: disable=too-many-arguments
         super().__init__(dimension=dimension)
         self.edge_list: np.ndarray = edge_list
@@ -50,20 +52,15 @@ class MatrixFactorization(BaseModel):  # pylint: disable=too-many-instance-attri
         self.node_num: Optional[int] = None
         self._build_graph()
         self.sampler: EdgeSampler = EdgeSampler(graph=self.graph)
-        self.all_embedding: Optional[np.ndarray] = None
-        self._initialize_embedding()
-        if self.all_embedding is not None:
+        if self.node_num:
             self.optimizer: PairOptimizer = PairOptimizer(
-                self.all_embedding,
                 total_update_times=self.sample_times,
                 sample_size=self.sample_size,
+                node_num=self.node_num,
+                dimension=self.dimension,
+                lr=lr,
+                l2_reg=l2_reg,
             )
-
-    def _initialize_embedding(self):
-        """
-        Initialize the embedding
-        """
-        self.all_embedding = np.random.rand(self.node_num, self.dimension)
 
     def _build_graph(self):
         """
@@ -93,21 +90,17 @@ class MatrixFactorization(BaseModel):  # pylint: disable=too-many-instance-attri
         """
         Train the model
         """
-        if self.all_embedding is None:
-            raise ValueError("Embedding is not initialized")
         logger.info("Start training")
         for i in range(self.sample_times):
             edges = self.sampler.sample_edges(size=self.sample_size, with_weight=True)
             self.optimizer.update(edges, l2_reg=True)
-            logger.info(
-                "Iteration {}/{} with loss {}",
-                i + 1,
-                self.sample_times,
-                self.optimizer.loss,
-            )
-            if abs(self.optimizer.loss) < 1e-5:
-                logger.info("Loss is close to zero, stop training")
-                break
+            if i % 100 == 0:
+                logger.info(
+                    "Iteration {}/{} with loss {}",
+                    i + 1,
+                    self.sample_times,
+                    self.optimizer.loss,
+                )
 
 
 if __name__ == "__main__":  # pragma: no cover
@@ -127,7 +120,11 @@ if __name__ == "__main__":  # pragma: no cover
             weights = ones((edge_num, 1))
             edge_list = concatenate((edges, weights), axis=1)
             loading_start = time.time()
-            matrix_factorization = MatrixFactorization(edge_list=edge_list)
+            matrix_factorization = MatrixFactorization(
+                edge_list=edge_list,
+                sample_size=10000,
+                sample_times=1000,
+            )
             matrix_factorization.train()
             loading_end = time.time()
             logger.info("Training cost {:.2f}s", loading_end - loading_start)

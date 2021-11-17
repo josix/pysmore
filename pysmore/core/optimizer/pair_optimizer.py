@@ -4,6 +4,7 @@ Pair optimizer implementation used for optimizing pairs of nodes.
 from dataclasses import dataclass
 
 import numpy as np
+from numpy.random import Generator, default_rng
 
 from pysmore.core.optimizer.helper.loss_function import compute_dot_product_update
 
@@ -21,13 +22,13 @@ class PairOptimizer:  # pylint: disable=too-few-public-methods, too-many-instanc
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
-        embeddings: np.ndarray,
+        node_num: int,
+        dimension: int,
         total_update_times: int,
         sample_size: int = 10 ** 6,
         lr: float = 0.025,
         l2_reg: float = 0.01,
     ):
-        self.embeddings: np.ndarray = embeddings
         self.learning_rate: float = lr
         self.learning_rate_min: float = self.learning_rate * 0.0001
         self.λ: float = l2_reg  # pylint: disable=non-ascii-name, invalid-name
@@ -35,6 +36,9 @@ class PairOptimizer:  # pylint: disable=too-few-public-methods, too-many-instanc
         self.sample_size: int = sample_size
         self.n_update: int = 0
         self.loss: float = 0.0
+        self.embeddings: np.ndarray = default_rng().uniform(
+            low=-1, high=1, size=(node_num, dimension)
+        )
 
     def _update_learning_rate(self, learning_rate: float):
         """
