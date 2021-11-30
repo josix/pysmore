@@ -4,7 +4,7 @@ Pair optimizer implementation used for optimizing pairs of nodes.
 from dataclasses import dataclass
 
 import numpy as np
-from numpy.random import Generator, default_rng
+from numpy.random import default_rng
 
 from pysmore.core.optimizer.helper.loss_function import compute_dot_product_update
 

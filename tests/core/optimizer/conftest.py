@@ -1,4 +1,3 @@
-import numpy as np
 import pytest
 
 from pysmore.core.optimizer import PairOptimizer
@@ -11,7 +10,4 @@ def dummy_optimizer():
     """
     node_num = 5
     dimension = 4
-    return PairOptimizer(
-        embeddings=np.random.rand(node_num, dimension),
-        total_update_times=5,
-    )
+    return PairOptimizer(node_num, dimension, total_update_times=5)
