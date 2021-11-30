@@ -35,6 +35,6 @@ def compute_dot_product_update(
             embeddings[source_node], embeddings[target_node]
         )
         loss += gradient
-        update_embedding[source_node] += gradient * embeddings[source_node]
-        update_embedding[target_node] += gradient * embeddings[target_node]
+        update_embedding[source_node] += gradient * embeddings[target_node]
+        update_embedding[target_node] += gradient * embeddings[source_node]
     return (update_embedding, loss)
